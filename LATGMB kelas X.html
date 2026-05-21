@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Latihan soal GMB — Persiapan ASAT Fisika kelas 10 SMAK HOLIS 2026</title>
+  <style>
+    :root{--primary:#0b63d6;--muted:#6b7280;--bg:#fafafa}
+    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; margin: 18px; color:#111; background:#fff; }
+    header { margin-bottom: 12px; }
+    h1 { font-size: 20px; margin: 0 0 6px 0; }
+    .meta { display:flex; gap:8px; margin-bottom:12px; align-items:center; flex-wrap:wrap; }
+    label { font-weight:600; margin-right:6px; }
+    input[type="text"]{ padding:6px; border:1px solid #bbb; border-radius:4px; }
+    .quiz { margin-top:12px; }
+    .q { border:1px solid #e6e6e6; padding:12px; margin-bottom:10px; border-radius:8px; background:var(--bg); }
+    .q strong { display:block; margin-bottom:6px; }
+    .opts { display:flex; gap:12px; flex-wrap:wrap; margin-top:6px; }
+    .opts label { font-weight:400; cursor:pointer; }
+    button { padding:8px 12px; border-radius:6px; border:0; background:var(--primary); color:white; cursor:pointer; }
+    button.secondary { background:var(--muted); }
+    .roster { margin-top:18px; }
+    table { width:100%; border-collapse:collapse; margin-top:8px; }
+    th, td { border:1px solid #ddd; padding:8px; text-align:left; font-size:14px; }
+    th { background:#f3f4f6; }
+    .small { font-size:13px; color:#555; }
+    .actions { display:flex; gap:8px; margin-top:8px; flex-wrap:wrap; }
+    .score { font-weight:700; color:var(--primary); }
+    .center { text-align:center; }
+    .note { margin-top:8px; font-size:13px; color:#444; }
+    .controls { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:8px; }
+    .footer { margin-top:18px; font-size:13px; color:#666; }
+    @media (max-width:720px){ .opts{flex-direction:column} .meta{flex-direction:column;align-items:flex-start} }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Latihan soal GMB — Persiapan ASAT Fisika kelas 10 SMAK HOLIS 2026</h1>
+    <div class="meta">
+      <div>
+        <label for="studentName">Nama Siswa</label><br>
+        <input id="studentName" type="text" placeholder="Masukkan nama lengkap" />
+      </div>
+      <div>
+        <label for="studentClass">Kelas</label><br>
+        <input id="studentClass" type="text" placeholder="Contoh: X IPA 1" />
+      </div>
+      <div style="align-self:end;">
+        <button id="startBtn">Mulai / Reset Jawaban</button>
+      </div>
+    </div>
+    <div class="note">Isi Nama dan Kelas sebelum mengerjakan. Setelah submit, hasil akan tersimpan di rekap lokal browser (localStorage).</div>
+  </header>
+
+  <main>
+    <form id="quizForm" class="quiz" onsubmit="return false;">
+      <div id="questionsContainer"></div>
+
+      <div class="controls">
+        <button id="submitBtn">Submit Jawaban</button>
+        <button id="clearFormBtn" type="button" class="secondary">Bersihkan Jawaban</button>
+        <button id="showAnswerKeyBtn" type="button" class="secondary">Tampilkan Kunci (Guru)</button>
+      </div>
+    </form>
+
+    <section class="roster">
+      <h3>Daftar Siswa yang Sudah Menjawab</h3>
+      <div class="actions">
+        <button id="showRosterBtn" class="secondary">Tampilkan Rekap</button>
+        <button id="exportCsvBtn">Ekspor CSV</button>
+        <button id="clearAllBtn" class="secondary">Hapus Semua Rekap</button>
+      </div>
+      <div id="rosterArea"></div>
+    </section>
+
+    <div class="footer">
+      <div>Catatan: setiap soal bernilai 1 poin. Jawaban disimpan hanya di perangkat ini (localStorage). Gunakan tombol Ekspor CSV untuk mengunduh rekap.</div>
+    </div>
+  </main>
+
+  <script>
+    /********** Soal lengkap (1–40) & Kunci Jawaban **********/
+    const questions = [
+      { q: "1. Sebuah benda menempuh 1/4 putaran. Besar sudut yang ditempuh adalah …", opts: ["π/2 rad","π rad","2π rad","3π/2 rad","4π rad"], key: "A" },
+      { q: "2. Konversikan 450° ke radian.", opts: ["π rad","3π/2 rad","5π/4 rad","5π/2 rad","3π rad"], key: "D" },
+      { q: "3. 1/3 putaran sama dengan berapa radian?", opts: ["π/3","2π/3","π/2","π","4π/3"], key: "B" },
+      { q: "4. Sebuah roda berputar 120 rpm. Besar kecepatan sudut ω (rad/s) adalah …", opts: ["2π","4π","6π","8π","10π"], key: "B" },
+      { q: "5. Roda berjari‑jari 0,5 m berputar dengan ω = 4π rad/s. Kecepatan linear titik tepi (v) adalah …", opts: ["2π m/s","4π m/s","6π m/s","8π m/s","10π m/s"], key: "A" },
+      { q: "6. Sebuah kipas berputar 60 rpm. Besar ω (rad/s) adalah …", opts: ["π","2π","3π","4π","5π"], key: "B" },
+      { q: "7. Benda berputar dengan ω = 2π rad/s pada R = 1 m. Percepatan sentripetal a_s adalah …", opts: ["2π m/s²","4π m/s²","2π² m/s²","4π² m/s²","8π² m/s²"], key: "D" },
+      { q: "8. Jika v = 10 m/s dan R = 2 m, besar percepatan sentripetal a_s adalah …", opts: ["25 m/s²","50 m/s²","75 m/s²","100 m/s²","125 m/s²"], key: "B" },
+      { q: "9. Mobil melewati tikungan dengan jari‑jari R = 20 m dan kecepatan v = 10 m/s. Percepatan sentripetalnya adalah …", opts: ["2 m/s²","5 m/s²","10 m/s²","20 m/s²","25 m/s²"], key: "B" },
+      { q: "10. Roda dengan jari‑jari 10 cm berputar 240 putaran per menit. Dalam 1 menit, sudut total yang ditempuh adalah …", opts: ["240π rad","480π rad","720π rad","960π rad","1440π rad"], key: "B" },
+      { q: "11. Sebuah benda berputar dengan ω = 6 rad/s. Dalam t = 10 s, sudut yang ditempuh θ adalah …", opts: ["30 rad","40 rad","50 rad","60 rad","70 rad"], key: "D" },
+      { q: "12. Roda berjari‑jari 0,2 m berputar dengan frekuensi f = 5 Hz. Kecepatan tangensial titik tepi v adalah …", opts: ["2π m/s","3π m/s","4π m/s","5π m/s","6π m/s"], key: "A" },
+      { q: "13. Sudut θ = 3π rad setara dengan berapa putaran?", opts: ["1 putaran","1½ putaran","1¾ putaran","2 putaran","2½ putaran"], key: "B" },
+      { q: "14. Titik pada roda memiliki percepatan sentripetal a_s = 100 m/s² pada R = 2 m. Kecepatan linear v (m/s) mendekati …", opts: ["10","14","20","40","100"], key: "B" },
+      { q: "15. Sebuah roda membuat 90 putaran dalam 30 s. Frekuensi f dan periode T masing‑masing adalah …", opts: ["f=3 Hz, T=1/3 s","f=2 Hz, T=1/2 s","f=1 Hz, T=1 s","f=0.5 Hz, T=2 s","f=0.3 Hz, T=10/3 s"], key: "A" },
+      { q: "16. Konversikan 120 rpm ke rad/s.", opts: ["π rad/s","2π rad/s","3π rad/s","4π rad/s","6π rad/s"], key: "D" },
+      { q: "17. Roda berjari‑jari 0,1 m berputar 300 rpm. Kecepatan linear titik tepi v adalah …", opts: ["π m/s","2π m/s","3π m/s","4π m/s","5π m/s"], key: "A" },
+      { q: "18. Sebuah benda bergerak melingkar dengan v = 12 m/s dan R = 3 m. Percepatan sentripetalnya adalah …", opts: ["12 m/s²","24 m/s²","36 m/s²","48 m/s²","60 m/s²"], key: "D" },
+      { q: "19. Jika periode T = 0,5 s, maka frekuensi f dan ω adalah …", opts: ["f=2 Hz, ω=4π rad/s","f=2 Hz, ω=2π rad/s","f=0.5 Hz, ω=π rad/s","f=1 Hz, ω=2π rad/s","f=2 Hz, ω=2π rad/s"], key: "A" },
+      { q: "20. Sebuah roda berputar 36 putaran dalam 12 s. Sudut total yang ditempuh adalah …", opts: ["72π rad","36π rad","24π rad","12π rad","6π rad"], key: "A" },
+      { q: "21. Benda berputar dengan f = 0,25 Hz dan R = 4 m. Kecepatan tangensial v adalah …", opts: ["2π m/s","π m/s","4π m/s","8π m/s","16π m/s"], key: "A" },
+      { q: "22. Titik tepi menempuh jarak s = 20 m dalam t = 2 s pada R = 1 m. Kecepatan sudut ω adalah …", opts: ["5 rad/s","10 rad/s","20 rad/s","40 rad/s","80 rad/s"], key: "B" },
+      { q: "23. Sebuah roda berputar 180° dalam 0,5 s. Kecepatan sudut ω adalah …", opts: ["π rad/s","2π rad/s","3π rad/s","4π rad/s","6π rad/s"], key: "B" },
+      { q: "24. Sebuah benda berputar dengan ω = 12 rad/s dan R = 0,25 m. Percepatan sentripetalnya adalah …", opts: ["9 m/s²","12 m/s²","36 m/s²","48 m/s²","144 m/s²"], key: "C" },
+      { q: "25. Konversikan 600 rpm ke rad/s.", opts: ["20π rad/s","40π rad/s","60π rad/s","80π rad/s","100π rad/s"], key: "A" },
+      { q: "26. Sebuah benda berputar dengan ω = 5 rad/s. Sudut yang ditempuh dalam t = 6 s adalah …", opts: ["15 rad","20 rad","30 rad","60 rad","120 rad"], key: "C" },
+      { q: "27. Dalam 10 s sebuah benda menempuh 50 putaran. Untuk R = 0,5 m, percepatan sentripetalnya adalah …", opts: ["10π² m/s²","20π² m/s²","50π² m/s²","100π² m/s²","200π² m/s²"], key: "C" },
+      { q: "28. Sudut θ = 2π rad ditempuh dalam 4 s. Kecepatan sudut ω adalah …", opts: ["π/2 rad/s","π rad/s","2π rad/s","4π rad/s","8π rad/s"], key: "A" },
+      { q: "29. Roda berputar 5 putaran per detik. Kecepatan linear pada R = 0,2 m adalah …", opts: ["2π m/s","4π m/s","6π m/s","8π m/s","10π m/s"], key: "A" },
+      { q: "30. Sudut θ = 3π/2 rad setara dengan berapa derajat?", opts: ["90°","180°","270°","360°","540°"], key: "C" },
+
+      /* OSN-style roda-roda (31-40) — semua soal direvisi agar asumsi jelas dan hasil bulat */
+      { q: "31. (Roda-roda) Roda A memiliki 20 gigi dan berputar 300 rpm searah jarum jam. Roda B memiliki 50 gigi dan bersentuhan langsung dengan A. Besar putaran roda B dan arah putarannya adalah …", opts: ["120 rpm, searah jarum jam","120 rpm, berlawanan arah jarum jam","750 rpm, searah jarum jam","750 rpm, berlawanan arah jarum jam","300 rpm, berlawanan arah jarum jam"], key: "B" },
+      { q: "32. (Roda-roda) Roda A (30 gigi) berputar 60 rpm dan menggerakkan roda B (10 gigi). Roda B terpasang pada poros yang sama dengan roda C (40 gigi). Jika B dan C berada pada poros yang sama, berapa rpm roda C?", opts: ["15 rpm","60 rpm","120 rpm","180 rpm","240 rpm"], key: "D" },
+      { q: "33. (Sabuk tanpa slip) Dua roda berdiameter D1 = 0,20 m dan D2 = 0,50 m dihubungkan oleh sabuk tanpa slip. Jika roda kecil (D1) berputar 120 rpm, kecepatan linear sabuk dan rpm roda besar adalah …", opts: ["0.4π m/s; 48 rpm","0.4π m/s; 120 rpm","0.2π m/s; 48 rpm","0.2π m/s; 120 rpm","0.6π m/s; 72 rpm"], key: "A" },
+      { q: "34. (Roda gigi bertingkat) A(15) → B(45). B terpasang pada poros yang sama dengan C(20). C menggerakkan D(60). Jika A berputar 90 rpm, berapa rpm D?", opts: ["5 rpm","10 rpm","15 rpm","30 rpm","60 rpm"], key: "B" },
+      { q: "35. Dua roda gigi identik masing‑masing 40 gigi saling berhubungan. Jika poros A berputar 200 rpm searah jarum jam, poros B berputar …", opts: ["200 rpm, searah jarum jam","200 rpm, berlawanan arah jarum jam","100 rpm, searah jarum jam","100 rpm, berlawanan arah jarum jam","400 rpm, berlawanan arah jarum jam"], key: "B" },
+      { q: "36. Sistem: A(12) menggerakkan B(36). B terpasang pada poros yang sama dengan C(12). C menggerakkan D(24). Jika A berputar 180 rpm, berapa rpm D?", opts: ["15 rpm","30 rpm","45 rpm","60 rpm","90 rpm"], key: "B" },
+      { q: "37. (Sabuk silang) Roda kecil diameter 0,15 m berputar 240 rpm dan menggerakkan roda besar diameter 0,45 m dengan sabuk silang (arah berlawanan). Berapa rpm roda besar dan arah relatifnya?", opts: ["80 rpm, searah jarum jam","80 rpm, berlawanan arah jarum jam","720 rpm, searah jarum jam","720 rpm, berlawanan arah jarum jam","240 rpm, berlawanan arah jarum jam"], key: "B" },
+      { q: "38. Roda A(25 gigi) menggerakkan B(50 gigi). B terpasang pada poros yang sama dengan C(10 gigi). Jika A berputar 120 rpm, berapa rasio n_A : n_C dan rpm C? (jelaskan asumsi: C berputar sama dengan poros B)", opts: ["1:4; 480 rpm","1:2; 240 rpm","2:1; 60 rpm","1:1; 120 rpm","2:1; 240 rpm"], key: "C" },
+      { q: "39. Gear train: input → 18 gigi → 54 gigi (poros sama dengan 12 gigi) → 12 gigi → 36 gigi (output). Jika input 360 rpm, berapa rpm output akhir?", opts: ["20 rpm","40 rpm","60 rpm","80 rpm","120 rpm"], key: "B" },
+      { q: "40. Dua roda A dan B memiliki jari‑jari r_A dan r_B. Jika kecepatan linear tepi sama, hubungan antara ω_A dan ω_B adalah …", opts: ["ω_A = ω_B","ω_A = (r_B / r_A) · ω_B","ω_A = (r_A / r_B) · ω_B","ω_A = r_A r_B · ω_B","ω_A = 1/(r_A r_B) · ω_B"], key: "B" }
+    ];
+
+    /********** Build question HTML (full text) **********/
+    const container = document.getElementById('questionsContainer');
+    questions.forEach((item, idx) => {
+      const div = document.createElement('div');
+      div.className = 'q';
+      const qnum = idx + 1;
+      let html = `<strong>${qnum}. ${item.q.replace(/^\d+\.\s*/,'')}</strong><div class="opts">`;
+      const labels = ['A','B','C','D','E'];
+      item.opts.forEach((opt, i) => {
+        const id = `q${qnum}_${labels[i]}`;
+        html += `<label for="${id}"><input type="radio" name="q${qnum}" id="${id}" value="${labels[i]}"> <span>${labels[i]}. ${opt}</span></label>`;
+      });
+      html += `</div>`;
+      div.innerHTML = html;
+      container.appendChild(div);
+    });
+
+    /********** Storage & Roster Management **********/
+    const STORAGE_KEY = 'gmb_quiz_roster_tka_v2';
+
+    function loadRoster() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : [];
+    }
+    function saveRoster(list) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+    }
+
+    function renderRoster() {
+      const area = document.getElementById('rosterArea');
+      const roster = loadRoster();
+      if (!roster.length) {
+        area.innerHTML = '<div class="small">Belum ada siswa yang menjawab.</div>';
+        return;
+      }
+      let html = '<table><thead><tr><th>No</th><th>Nama</th><th>Kelas</th><th>Skor</th><th>Benar</th><th>Salah</th><th>Waktu</th><th class="center">Aksi</th></tr></thead><tbody>';
+      roster.forEach((r, i) => {
+        html += `<tr>
+          <td>${i+1}</td>
+          <td>${escapeHtml(r.name)}</td>
+          <td>${escapeHtml(r.class)}</td>
+          <td class="score">${r.score}/${questions.length}</td>
+          <td>${r.correct}</td>
+          <td>${r.wrong}</td>
+          <td>${r.time}</td>
+          <td class="center"><button data-index="${i}" class="deleteBtn secondary">Hapus</button></td>
+        </tr>`;
+      });
+      html += '</tbody></table>';
+      area.innerHTML = html;
+
+      document.querySelectorAll('.deleteBtn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const idx = Number(e.currentTarget.dataset.index);
+          const arr = loadRoster();
+          arr.splice(idx,1);
+          saveRoster(arr);
+          renderRoster();
+        });
+      });
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      return text.replace(/[&<>"']/g, function(m){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]; });
+    }
+
+    /********** Quiz Logic **********/
+    document.getElementById('startBtn').addEventListener('click', () => {
+      document.getElementById('studentName').focus();
+      document.querySelectorAll('input[type=radio]').forEach(r => r.checked = false);
+    });
+
+    document.getElementById('clearFormBtn').addEventListener('click', () => {
+      if (!confirm('Bersihkan semua pilihan jawaban?')) return;
+      document.querySelectorAll('input[type=radio]').forEach(r => r.checked = false);
+    });
+
+    document.getElementById('submitBtn').addEventListener('click', () => {
+      const name = document.getElementById('studentName').value.trim();
+      const cls = document.getElementById('studentClass').value.trim();
+      if (!name) { alert('Masukkan nama siswa sebelum submit.'); return; }
+      if (!cls) { alert('Masukkan kelas siswa sebelum submit.'); return; }
+
+      // collect answers
+      let correct = 0;
+      let wrong = 0;
+      const answers = [];
+      for (let i=0;i<questions.length;i++){
+        const qnum = i+1;
+        const sel = document.querySelector(`input[name="q${qnum}"]:checked`);
+        const ans = sel ? sel.value : null;
+        answers.push(ans);
+        if (ans === questions[i].key) correct++; else wrong++;
+      }
+      const score = correct; // 1 point per correct
+      const time = new Date().toLocaleString();
+
+      // save to roster (append)
+      const roster = loadRoster();
+      roster.push({ name, class: cls, score, correct, wrong, time, answers });
+      saveRoster(roster);
+
+      // show result to user
+      alert(`Terima kasih, ${name}.\nSkor Anda: ${score}/${questions.length}\nBenar: ${correct}\nSalah/Tidak dijawab: ${wrong}`);
+
+      // clear form for next student
+      document.querySelectorAll('input[type=radio]').forEach(r => r.checked = false);
+      document.getElementById('studentName').value = '';
+      document.getElementById('studentClass').value = '';
+
+      renderRoster();
+    });
+
+    // show roster
+    document.getElementById('showRosterBtn').addEventListener('click', renderRoster);
+
+    // export CSV
+    document.getElementById('exportCsvBtn').addEventListener('click', () => {
+      const roster = loadRoster();
+      if (!roster.length) { alert('Belum ada data untuk diekspor.'); return; }
+      const header = ['No','Nama','Kelas','Skor','Benar','Salah','Waktu','Jawaban (A-E per soal)'];
+      const rows = roster.map((r,i) => {
+        const answers = (r.answers || []).map(a => a ? a : '').join(';');
+        return [i+1, r.name, r.class, `${r.score}/${questions.length}`, r.correct, r.wrong, r.time, answers];
+      });
+      const csvContent = [header, ...rows].map(r => r.map(cell => `"${String(cell).replace(/"/g,'""')}"`).join(',')).join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'rekap_quiz_gmb_tka_osn.csv';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    });
+
+    // clear all roster
+    document.getElementById('clearAllBtn').addEventListener('click', () => {
+      if (!confirm('Hapus semua rekap siswa? Tindakan ini tidak dapat dibatalkan.')) return;
+      localStorage.removeItem(STORAGE_KEY);
+      renderRoster();
+    });
+
+    // show/hide answer key (for teacher)
+    document.getElementById('showAnswerKeyBtn').addEventListener('click', () => {
+      const key = questions.map((q,i) => `${i+1}. ${q.key}`).join('\n');
+      const win = window.open('', '_blank', 'width=400,height=700,scrollbars=yes');
+      win.document.write('<pre style="font-family:monospace;padding:12px;">Kunci Jawaban (Soal 1–40)\\n\\n' + key + '</pre>');
+      win.document.title = 'Kunci Jawaban — GMB';
+    });
+
+    // initial render
+    renderRoster();
+
+    // Prevent accidental form submit on Enter
+    document.getElementById('quizForm').addEventListener('submit', (e) => e.preventDefault());
+  </script>
+</body>
+</html>
